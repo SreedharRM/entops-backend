@@ -10,6 +10,8 @@ async def commission_payment(task_id, email: dict, amount: float, recipient: str
         await emit_event(task_id, "started", {"workflow": "commission_payment"})
 
         # Step 1 – Read invoice email
+        if not isinstance(email, dict):
+            raise ValueError("Email must be a dictionary with keys: 'from', 'subject', 'body'")
         await process_email(task_id, email["from"], email["subject"], email["body"])
 
         # Step 2 – Validate with finance policy

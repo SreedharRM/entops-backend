@@ -25,6 +25,8 @@ def sendmes(
         "inbox_id": "shinyproperty819@agentmail.to",
         "to": "bhargavicon123@gmail.com",
         "subject": "subject",
+        "html": html,
+        "text": text,
     }
 
     message_data["cc"] = "bhargavicon123@gmail.com"

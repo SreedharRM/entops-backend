@@ -9,6 +9,7 @@ import json
 from typing import List
 from datetime import datetime
 from pydantic import BaseModel
+from backend.myagent import run_agent
 
 # Initialize FastAPI app
 app = FastAPI(title="EntOps", description="Enterprise Operations API", version="1.0.0")
@@ -80,6 +81,18 @@ async def approve(task_id: str):
 async def reject(task_id: str):
     """Reject a pending task."""
     return await reject_task(task_id)
+
+
+@app.post("/tasks/{task_id}/reject")
+async def reject(task_id: str):
+    """Reject a pending task."""
+    return await reject_task(task_id)
+
+@app.get("/hrform")
+async def hrform():
+    """Call the agent and return HR form result."""
+    result = await run_agent()
+    return {"agent_result": result}
 
 # WebSocket manager
 class ConnectionManager:

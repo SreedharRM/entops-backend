@@ -40,7 +40,7 @@ async def contractor_onboarding(task_id: str, contractor_info: dict = None, **kw
         
         # Step 2: Send welcome email
         await emit_event(task_id, "in_progress", {
-            "step": f"Sending welcome email to {contractor_email}",
+            "step": f"Sending welcome email to Alex Johnson",
             "action": "welcome_email"
         })
         await asyncio.sleep(0.5)
@@ -52,8 +52,8 @@ async def contractor_onboarding(task_id: str, contractor_info: dict = None, **kw
             to=contractor_email,
             cc=None,
             subject="Welcome to the Project!",
-            text=f"Hi {contractor_email},\n\nWelcome aboard! We're excited to have you join us.",
-            html=f"<p>Hi {contractor_email},</p><p><b>Welcome aboard!</b> We're excited to have you join us.</p>"
+            text=f"Hi Alex Johnson,\n\nWelcome aboard! We're excited to have you join us.",
+            html=f"<p>Hi alex.johnson@agentmail.to ,</p><p><b>Welcome aboard!</b> We're excited to have you join us.</p>"
         )
 
         print("Mail sent:", response)
