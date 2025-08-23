@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EntOps WebSocket Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #messages { border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; margin: 10px 0; }
+        input, button { padding: 8px; margin: 5px; }
+        #messageInput { width: 300px; }
+        .message { margin: 5px 0; padding: 5px; background: #f0f0f0; border-radius: 3px; }
+        .sent { background: #e3f2fd; }
+        .received { background: #f1f8e9; }
+    </style>
+</head>
+<body>
+    <h1>EntOps WebSocket Test Client</h1>
+    
+    <div>
+        <button id="connectBtn">Connect</button>
+        <button id="disconnectBtn" disabled>Disconnect</button>
+        <span id="status">Disconnected</span>
+    </div>
+    
+    <div id="messages"></div>
+    
+    <div>
+        <input type="text" id="messageInput" placeholder="Enter message (JSON format)" value='{"action": "test", "message": "Hello WebSocket!"}'>
+        <button id="sendBtn" disabled>Send</button>
+    </div>
+
+    <script>
+        let ws = null;
+        const connectBtn = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const sendBtn = document.getElementById('sendBtn');
+        const messageInput = document.getElementById('messageInput');
+        const messages = document.getElementById('messages');
+        const status = document.getElementById('status');
+
+        function addMessage(content, type = 'received') {
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.textContent = `${new Date().toLocaleTimeString()}: ${content}`;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        connectBtn.addEventListener('click', () => {
+            ws = new WebSocket('ws://localhost:8000/ws');
+            
+            ws.onopen = () => {
+                status.textContent = 'Connected';
+                connectBtn.disabled = true;
+                disconnectBtn.disabled = false;
+                sendBtn.disabled = false;
+                addMessage('Connected to WebSocket', 'received');
+            };
+            
+            ws.onmessage = (event) => {
+                addMessage(`Received: ${event.data}`, 'received');
+            };
+            
+            ws.onclose = () => {
+                status.textContent = 'Disconnected';
+                connectBtn.disabled = false;
+                disconnectBtn.disabled = true;
+                sendBtn.disabled = true;
+                addMessage('Disconnected from WebSocket', 'received');
+            };
+            
+            ws.onerror = (error) => {
+                addMessage(`Error: ${error}`, 'received');
+            };
+        });
+
+        disconnectBtn.addEventListener('click', () => {
+            if (ws) {
+                ws.close();
+            }
+        });
+
+        sendBtn.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (ws && message) {
+                ws.send(message);
+                addMessage(`Sent: ${message}`, 'sent');
+                messageInput.value = '{"action": "test", "message": "Hello WebSocket!"}';
+            }
+        });
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !sendBtn.disabled) {
+                sendBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
